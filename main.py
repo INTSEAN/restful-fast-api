@@ -23,4 +23,10 @@ def home():
   return {"This is my first fast api site..."}
 
 
-# Create
+# Create an item
+app.post("/items/")
+def create_item(item: Item):
+  if item.id in database:
+    raise HTTPException(status=400, detail="Item already exists")
+  database[item.id] = item
+  return {"Message"}
