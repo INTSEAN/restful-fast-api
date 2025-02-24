@@ -5,8 +5,7 @@ from typing import List
 
 app = FastAPI()
 
-# define a fake item
-
+# define a item
 class Item(BaseModel):
   id: int
   name: str
@@ -14,14 +13,12 @@ class Item(BaseModel):
   price: float
   status: bool
   
-# craete a fake database
-
+# create a fake database
 database = {}
 
 @app.get("/")
 def home():
   return {"This is my first fast api site..."}
-
 
 # Create an item
 app.post("/items/")
@@ -29,4 +26,18 @@ def create_item(item: Item):
   if item.id in database:
     raise HTTPException(status=400, detail="Item already exists")
   database[item.id] = item
-  return {"Message"}
+  return {"Message": "Item added successfully", "item": item}
+
+# read all the items
+@app.get("/items/", response_model=List[Item])
+def get_items():
+  return list(database.values)
+
+# read a single item
+@app.get("/items/{item_id}")
+def get_item(item_id: int):
+  if item_id not in database:
+    raise HTTPException(status=404, detail="Item not found")
+  return database[item_id]
+
+
